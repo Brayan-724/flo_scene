@@ -6,7 +6,6 @@ use std::collections::*;
 use std::sync::*;
 
 #[cfg(feature="serde_support")] use serde::*;
-#[cfg(feature="serde_support")] use serde::ser::*;
 #[cfg(feature="serde_support")] use serde::de::*;
 
 static IDS_FOR_NAMES: Lazy<RwLock<HashMap<String, SubProgramNameId>>>   = Lazy::new(|| RwLock::new(HashMap::new()));
@@ -135,6 +134,7 @@ impl Deref for StaticSubProgramId {
     }
 }
 
+#[cfg(feature="serde_support")]
 impl Serialize for SubProgramNameId {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -145,6 +145,7 @@ impl Serialize for SubProgramNameId {
     }
 }
 
+#[cfg(feature="serde_support")]
 impl<'de> Deserialize<'de> for SubProgramNameId {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -178,11 +179,11 @@ impl<'de> Deserialize<'de> for SubProgramNameId {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature="json"))]
 mod test {
     use super::*;
 
-    use serde_json::{json};
+    use serde_json::json;
 
     #[test]
     pub fn serialize_name() {
